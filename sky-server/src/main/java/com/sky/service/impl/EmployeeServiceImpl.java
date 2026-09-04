@@ -22,8 +22,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * 员工登录
      *
-     * @param employeeLoginDTO
-     * @return
+     * @param employeeLoginDTO 员工登录时传递的数据模型
+     * @return 返回员工的实体对象
      */
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
@@ -39,13 +39,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //密码比对
-        // TODO 后期需要进行md5加密，然后再进行比对
+        // 对前端传过来的明文密码进行md5加密处理
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(employee.getPassword())) {
             //密码错误
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
 
-        if (employee.getStatus() == StatusConstant.DISABLE) {
+        if (StatusConstant.DISABLE.equals(employee.getStatus())) {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
